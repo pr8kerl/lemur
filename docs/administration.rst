@@ -361,6 +361,15 @@ The following LDAP options are not required, however TLS is always recommended.
 
             LDAP_GROUPS_TO_ROLES = {'lemur_admins': 'admin', 'Lemur Team DL Group': 'team@example.com'}
 
+.. data:: LDAP_DEBUG
+    :noindex:
+
+        You can enable some LDAP specific debug output by turning this on. Don't run this in production. Can be useful to diagnose ldap connectivity problems.
+
+        ::
+
+            LDAP_DEBUG = True
+
 
 Authentication Providers
 ~~~~~~~~~~~~~~~~~~~~~~~~

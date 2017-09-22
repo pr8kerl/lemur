@@ -42,6 +42,7 @@ class LdapPrincipal():
         self.ldap_required_group = current_app.config.get("LDAP_REQUIRED_GROUP", None)
         self.ldap_groups_to_roles = current_app.config.get("LDAP_GROUPS_TO_ROLES", None)
         self.ldap_attrs = ['memberOf']
+        self.ldap_debug = current_app.config.get("LDAP_DEBUG", False)
         self.ldap_client = None
         self.ldap_groups = None
 
@@ -142,6 +143,11 @@ class LdapPrincipal():
             # build a client
             if not self.ldap_client:
                 self.ldap_client = ldap.initialize(self.ldap_server)
+                self.ldap_client.set_option(ldap.OPT_DEBUG_LEVEL, 255)
+            # ldap debug mode
+            if self.ldap_debug:
+                self.ldap_client = ldap.initialize(self.ldap_server, trace_level=2)
+                self.ldap_client.set_option(ldap.OPT_DEBUG_LEVEL, 4095)
             # perform a synchronous bind
             self.ldap_client.set_option(ldap.OPT_REFERRALS, 0)
             if self.ldap_use_tls:
@@ -149,7 +155,6 @@ class LdapPrincipal():
                 self.ldap_client.set_option(ldap.OPT_PROTOCOL_VERSION, 3)
                 self.ldap_client.set_option(ldap.OPT_X_TLS, ldap.OPT_X_TLS_DEMAND)
                 self.ldap_client.set_option(ldap.OPT_X_TLS_DEMAND, True)
-                self.ldap_client.set_option(ldap.OPT_DEBUG_LEVEL, 255)
             if self.ldap_cacert_file:
                 self.ldap_client.set_option(ldap.OPT_X_TLS_CACERTFILE, self.ldap_cacert_file)
             self.ldap_client.simple_bind_s(self.ldap_principal, self.ldap_password)
